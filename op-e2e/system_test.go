@@ -856,7 +856,7 @@ func TestFees(t *testing.T) {
 	}
 
 	cfg := DefaultSystemConfig(t)
-	// TODO: after we have the sytem config contract and new op-geth L1 cost utils,
+	// TODO: after we have the system config contract and new op-geth L1 cost utils,
 	// we can pull in l1 costs into every e2e test and account for it in assertions easily etc.
 	cfg.DeployConfig.GasPriceOracleOverhead = 2100
 	cfg.DeployConfig.GasPriceOracleScalar = 1000_000

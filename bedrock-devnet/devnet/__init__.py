@@ -14,6 +14,7 @@ from devnet.genesis import GENESIS_TMPL
 
 parser = argparse.ArgumentParser(description='Bedrock devnet launcher')
 parser.add_argument('--monorepo-dir', help='Directory of the monorepo', default=os.getcwd())
+parser.add_argument('--l1-priv-key', help='Private key to use with l1', default='ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80')
 
 log = logging.getLogger()
 
@@ -28,23 +29,23 @@ def main():
     contracts_bedrock_dir = pjoin(monorepo_dir, 'packages', 'contracts-bedrock')
     deployment_dir = pjoin(contracts_bedrock_dir, 'deployments', 'devnetL1')
     op_node_dir = pjoin(args.monorepo_dir, 'op-node')
-    genesis_l1_path = pjoin(devnet_dir, 'genesis-l1.json')
+    # genesis_l1_path = pjoin(devnet_dir, 'genesis-l1.json')
     genesis_l2_path = pjoin(devnet_dir, 'genesis-l2.json')
     addresses_json_path = pjoin(devnet_dir, 'addresses.json')
     sdk_addresses_json_path = pjoin(devnet_dir, 'sdk-addresses.json')
     rollup_config_path = pjoin(devnet_dir, 'rollup.json')
     os.makedirs(devnet_dir, exist_ok=True)
 
-    if os.path.exists(genesis_l1_path):
-        log.info('L2 genesis already generated.')
-    else:
-        log.info('Generating L1 genesis.')
-        write_json(genesis_l1_path, GENESIS_TMPL)
+    # if os.path.exists(genesis_l1_path):
+    #     log.info('L2 genesis already generated.')
+    # else:
+    #     log.info('Generating L1 genesis.')
+    #     write_json(genesis_l1_path, GENESIS_TMPL)
 
-    log.info('Starting L1.')
-    run_command(['docker-compose', 'up', '-d', 'l1'], cwd=ops_bedrock_dir, env={
-        'PWD': ops_bedrock_dir
-    })
+    # log.info('Starting L1.')
+    # run_command(['docker-compose', 'up', '-d', 'l1'], cwd=ops_bedrock_dir, env={
+    #     'PWD': ops_bedrock_dir
+    # })
     wait_up(8545)
 
     log.info('Generating network config.')
@@ -64,7 +65,7 @@ def main():
         run_command(['yarn', 'hardhat', '--network', 'devnetL1', 'deploy', '--tags', 'fresh'], env={
             'CHAIN_ID': '900',
             'L1_RPC': 'http://localhost:8545',
-            'PRIVATE_KEY_DEPLOYER': 'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
+            'PRIVATE_KEY_DEPLOYER': args.l1_priv_key
         }, cwd=contracts_bedrock_dir)
         contracts = os.listdir(deployment_dir)
         addresses = {}

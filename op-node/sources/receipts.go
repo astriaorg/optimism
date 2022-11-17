@@ -24,6 +24,7 @@ func makeReceiptsFn(block eth.BlockID, receiptHash common.Hash) func(txHashes []
 		// Let's check everything quickly.
 		logIndex := uint(0)
 		for i, r := range receipts {
+			// receiptJSON, _ := json.MarshalIndent(r, "", "  ")
 			if r == nil { // on reorgs or other cases the receipts may disappear before they can be retrieved.
 				return nil, fmt.Errorf("receipt of tx %d returns nil on retrieval", i)
 			}
@@ -66,6 +67,7 @@ func makeReceiptsFn(block eth.BlockID, receiptHash common.Hash) func(txHashes []
 		// or returning them out-of-order. Verify the receipts against the expected receipt-hash.
 		hasher := trie.NewStackTrie(nil)
 		computed := types.DeriveSha(types.Receipts(receipts), hasher)
+		fmt.Println("Got HERE")
 		if receiptHash != computed {
 			return nil, fmt.Errorf("failed to fetch list of receipts: expected receipt root %s but computed %s from retrieved receipts", receiptHash, computed)
 		}

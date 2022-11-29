@@ -48,8 +48,7 @@ func makeReceiptsFn(block eth.BlockID, receiptHash common.Hash) func(txHashes []
 					return nil, fmt.Errorf("log %d has unexpected tx index %d", log.Index, log.TxIndex)
 				}
 				if log.BlockHash != block.Hash {
-					fmt.Printf("log %d of block %s has unexpected block hash %s\n", log.Index, block.Hash, log.BlockHash)
-					// return nil, fmt.Errorf("log %d of block %s has unexpected block hash %s", log.Index, block.Hash, log.BlockHash)
+					return nil, fmt.Errorf("log %d of block %s has unexpected block hash %s", log.Index, block.Hash, log.BlockHash)
 				}
 				if log.BlockNumber != block.Number {
 					return nil, fmt.Errorf("log %d of block %d has unexpected block number %d", log.Index, block.Number, log.BlockNumber)
@@ -68,10 +67,8 @@ func makeReceiptsFn(block eth.BlockID, receiptHash common.Hash) func(txHashes []
 		// or returning them out-of-order. Verify the receipts against the expected receipt-hash.
 		hasher := trie.NewStackTrie(nil)
 		computed := types.DeriveSha(types.Receipts(receipts), hasher)
-		fmt.Println("Got HERE")
 		if receiptHash != computed {
-			fmt.Printf("failed to fetch list of receipts: expected receipt root %s but computed %s from retrieved receipts\n", receiptHash, computed)
-			// return nil, fmt.Errorf("failed to fetch list of receipts: expected receipt root %s but computed %s from retrieved receipts", receiptHash, computed)
+			return nil, fmt.Errorf("failed to fetch list of receipts: expected receipt root %s but computed %s from retrieved receipts", receiptHash, computed)
 		}
 		return receipts, nil
 	}

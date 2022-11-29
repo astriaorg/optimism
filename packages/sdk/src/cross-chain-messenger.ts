@@ -302,7 +302,6 @@ export class CrossChainMessenger {
         ? this.contracts.l1.L1CrossDomainMessenger
         : this.contracts.l2.L2CrossDomainMessenger
 
-    console.log(receipt)
     return receipt.logs
       .filter((log) => {
         // Only look at logs emitted by the messenger address
@@ -517,9 +516,7 @@ export class CrossChainMessenger {
       // message (very common). It's unintuitive to treat a TransactionLike as a MessageLike if
       // they emit more than one message (which message do you pick?), so we throw an error.
       if (messages.length !== 1) {
-        throw new Error(
-          `expected 1 message, got ${messages.length}, message: ${message}`
-        )
+        throw new Error(`expected 1 message, got ${messages.length}`)
       }
 
       return messages[0]

@@ -246,6 +246,9 @@ func (s *EthClient) FetchReceipts(ctx context.Context, blockHash common.Hash) (e
 		for i := 0; i < len(txs); i++ {
 			txHashes[i] = txs[i].Hash()
 		}
+		fmt.Println("Block ID:", eth.ToBlockID(info))
+		fmt.Println("Receipts Hash:", info.ReceiptHash())
+		fmt.Println("txHashes:", txHashes)
 		fetcher = NewReceiptsFetcher(eth.ToBlockID(info), info.ReceiptHash(), txHashes, s.client.BatchCallContext, s.maxBatchSize)
 		s.receiptsCache.Add(blockHash, fetcher)
 	}
@@ -254,11 +257,13 @@ func (s *EthClient) FetchReceipts(ctx context.Context, blockHash common.Hash) (e
 		if err := fetcher.Fetch(ctx); err == io.EOF {
 			break
 		} else if err != nil {
+			fmt.Println("Error at fetch")
 			return nil, nil, err
 		}
 	}
 	receipts, err := fetcher.Result()
 	if err != nil {
+		fmt.Println("Error at result")
 		return nil, nil, err
 	}
 

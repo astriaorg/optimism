@@ -24,6 +24,7 @@ func makeReceiptsFn(block eth.BlockID, receiptHash common.Hash) func(txHashes []
 		// Let's check everything quickly.
 		logIndex := uint(0)
 		for i, r := range receipts {
+			// receiptJSON, _ := json.MarshalIndent(r, "", "  ")
 			if r == nil { // on reorgs or other cases the receipts may disappear before they can be retrieved.
 				return nil, fmt.Errorf("receipt of tx %d returns nil on retrieval", i)
 			}

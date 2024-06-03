@@ -36,17 +36,18 @@ services:
       - "/bin/sh"
       - "/entrypoint.sh"
       - "--authrpc.jwtsecret=/config/test-jwt-secret.txt"
+    networks:
+      localnet:
 
   op-node:
     depends_on:
-      - l1
       - l2
     build:
       context: ../
       dockerfile: ./op-node/Dockerfile
     command: >
       op-node
-      --l1=ws://l1:8546
+      --l1=ws://ethermint0:8546
       --l2=http://l2:8551
       --l2.jwt-secret=/config/test-jwt-secret.txt
       --sequencer.enabled
@@ -76,10 +77,11 @@ services:
       - "${PWD}/test-jwt-secret.txt:/config/test-jwt-secret.txt"
       - "${PWD}/../.devnet/rollup.json:/rollup.json"
       - op_log:/op_log
+    networks:
+      localnet:
 
   op-proposer:
     depends_on:
-      - l1
       - l2
       - op-node
     build:
@@ -89,7 +91,7 @@ services:
       - "6062:6060"
       - "7302:7300"
     environment:
-      OP_PROPOSER_L1_ETH_RPC: http://l1:8545
+      OP_PROPOSER_L1_ETH_RPC: http://ethermint0:8545
       OP_PROPOSER_ROLLUP_RPC: http://op-node:8545
       OP_PROPOSER_POLL_INTERVAL: 1s
       OP_PROPOSER_NUM_CONFIRMATIONS: 1
@@ -102,10 +104,11 @@ services:
       OP_PROPOSER_PPROF_ENABLED: "true"
       OP_PROPOSER_METRICS_ENABLED: "true"
       OP_PROPOSER_ALLOW_NON_FINALIZED: "true"
+    networks:
+      localnet:
 
   op-batcher:
     depends_on:
-      - l1
       - l2
       - op-node
     build:
@@ -115,7 +118,7 @@ services:
       - "6061:6060"
       - "7301:7300"
     environment:
-      OP_BATCHER_L1_ETH_RPC: http://l1:8545
+      OP_BATCHER_L1_ETH_RPC: http://ethermint0:8545
       OP_BATCHER_L2_ETH_RPC: http://l2:8545
       OP_BATCHER_ROLLUP_RPC: http://op-node:8545
       OP_BATCHER_MIN_L1_TX_SIZE_BYTES: 1
@@ -132,6 +135,8 @@ services:
       OP_BATCHER_LOG_TERMINAL: "true"
       OP_BATCHER_PPROF_ENABLED: "true"
       OP_BATCHER_METRICS_ENABLED: "true"
+    networks:
+      localnet:
 
   stateviz:
     build:
@@ -146,3 +151,10 @@ services:
       - "9090:8080"
     volumes:
       - op_log:/op_log:ro
+    networks:
+      localnet:
+
+networks:
+  localnet:
+    name: localnet
+    external: true

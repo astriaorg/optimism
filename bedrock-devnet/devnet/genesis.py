@@ -1,9 +1,8 @@
 import time
+import os
 
 DEV_ACCOUNTS = [
-    '3c44cdddb6a900fa2b585dd299e03d12fa4293bc',
-    '70997970c51812dc3a010c7d01b50e0d17dc79c8',
-    'f39fd6e51aad88f6f4ce6ab8827279cfffb92266'
+      os.environ.get('PRIVATE_KEY_DEPLOYER', '3c44cdddb6a900fa2b585dd299e03d12fa4293bc')
 ]
 
 GENESIS_TMPL = {
